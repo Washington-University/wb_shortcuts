@@ -277,21 +277,27 @@ function freesurfer_resample_prep ()
         echo "      <midthickness-current-out> - output - the midthickness on the current"
         echo "         freesurfer mesh, in gifti format"
         echo "      <midthickness-new-out> - output - likewise, on the new mesh"
+        echo "      <current-gifti-sphere-out> - output - the freesurfer sphere converted to"
+        echo "         gifti, must end in '.surf.gii'"
         echo
         #wrap guide for 80 columns                                                           |
         echo "      NOTE: freesurfer's mris_convert must be installed and in the \$PATH in"
         echo "      order to use this function, for converting the surfaces to GIFTI format."
         echo
-        echo "      Generate the midthickness surfaces used for resampling individual data"
-        echo "      from FreeSurfer to fs_LR.  This generates both surfaces needed by the"
-        echo "      -area-surfs option of wb_command's -metric-resample, -label-resample, and"
-        echo "      similar commands."
+        echo "      Generate the various surface files used for resampling individual data"
+        echo "      from FreeSurfer to fs_LR.  This generates the gifti-format sphere, and"
+        echo "      both midthickness surfaces needed by the -area-surfs option of wb_command"
+        echo "      -metric-resample, -label-resample, and similar commands."
         echo
         exit 0
     fi
-    if (($# < 6))
+    if (($# < 7))
     then
-        error "function requires 6 arguments"
+        error "function requires 7 arguments"
+    fi
+    if [[ "$7" != *.surf.gii ]]
+    then
+        error "<current-gifti-sphere-out> filename must end in '.surf.gii'"
     fi
     add_temporary_files "$5.temp$$.white.surf.gii" "$5.temp$$.pial.surf.gii"
     if [[ "$5" == */* ]]
@@ -305,9 +311,10 @@ function freesurfer_resample_prep ()
         mris_convert "$1" ./"$5.temp$$.white.surf.gii"
         mris_convert "$2" ./"$5.temp$$.pial.surf.gii"
     fi
+    mris_convert "$3" "$7"
     wb_command -surface-average "$5" -surf "$5.temp$$.white.surf.gii" -surf "$5.temp$$.pial.surf.gii"
     rm -f "$5.temp$$.white.surf.gii" "$5.temp$$.pial.surf.gii"
-    wb_command -surface-resample "$5" "$3" "$4" BARYCENTRIC "$6"
+    wb_command -surface-resample "$5" "$7" "$4" BARYCENTRIC "$6"
 }
 
 create_function "-import-probtrack-roi" "CONVERT ROI TRACKS TO CIFTI"
