@@ -136,7 +136,7 @@ function border_file_concatenate ()
     then
         error "function requires 2 or more arguments"
     fi
-    declare -a merge_arg_array
+    local -a merge_arg_array
     for ((i = 2; i <= $#; ++i))
     do
         merge_arg_array+=("-border" "${!i}")
@@ -166,7 +166,7 @@ function cifti_concatenate ()
     then
         error "function requires 2 or more arguments"
     fi
-    declare -a merge_arg_array
+    local -a merge_arg_array
     for ((i = 2; i <= $#; ++i))
     do
         merge_arg_array+=("-cifti" "${!i}")
@@ -195,7 +195,7 @@ function cifti_demean ()
         echo
         exit 0
     fi
-    normalize=0
+    local normalize=0
     if [[ "$1" == "-normalize" ]]
     then
         normalize=1
@@ -205,7 +205,7 @@ function cifti_demean ()
     then
         error "function requires 2 or more arguments"
     fi
-    declare -a merge_arg_array
+    local -a merge_arg_array
     for ((i = 2; i <= $#; ++i))
     do
         #we might not make the stdev temporary, but it isn't a problem to add it anyway
@@ -371,7 +371,7 @@ function label_concatenate ()
     then
         error "function requires 2 or more arguments"
     fi
-    declare -a merge_arg_array
+    local -a merge_arg_array
     for ((i = 2; i <= $#; ++i))
     do
         merge_arg_array+=("-label" "${!i}")
@@ -401,7 +401,7 @@ function metric_concatenate ()
     then
         error "function requires 2 or more arguments"
     fi
-    declare -a merge_arg_array
+    local -a merge_arg_array
     for ((i = 2; i <= $#; ++i))
     do
         merge_arg_array+=("-metric" "${!i}")
@@ -431,7 +431,7 @@ function scene_file_concatenate ()
     then
         error "function requires 2 or more arguments"
     fi
-    declare -a merge_arg_array
+    local -a merge_arg_array
     for ((i = 2; i <= $#; ++i))
     do
         merge_arg_array+=("-scene-file" "${!i}")
@@ -461,7 +461,7 @@ function volume_concatenate ()
     then
         error "function requires 2 or more arguments"
     fi
-    declare -a merge_arg_array
+    local -a merge_arg_array
     for ((i = 2; i <= $#; ++i))
     do
         merge_arg_array+=("-volume" "${!i}")
