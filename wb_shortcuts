@@ -21,7 +21,7 @@
 #  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 #  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-set -e
+set -ue
 
 global_cmd_line="$0 $*"
 global_script_name="wb_shortcuts"
@@ -78,7 +78,10 @@ function main ()
 }
 
 #automagic helpers for function matching
-declare -A global_switch_to_descrip
+#NOTE: mac still ships with a version of bash from 2007(!)
+#so, don't use associative arrays or anything fancy
+declare -a global_switch
+declare -a global_descrip
 function create_function ()
 {
     local function_switch="$1"
@@ -99,7 +102,8 @@ function create_function ()
         exit 1
     fi
     #use $* in case they didn't quote the short description
-    global_switch_to_descrip["$function_switch"]="$*"
+    global_switch+=("$function_switch")
+    global_descrip+=("$*")
 }
 
 function switch_to_func_name
@@ -121,7 +125,7 @@ function border_file_concatenate ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <output-border-file>"
         echo "      <input-border-1>"
@@ -151,7 +155,7 @@ function cifti_concatenate ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <output-cifti>"
         echo "      <input-cifti-1>"
@@ -181,7 +185,7 @@ function cifti_demean ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      [-normalize] - also normalize input files"
         echo "      <output-cifti>"
@@ -238,7 +242,7 @@ function command_help_search ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <search-string> - grep pattern to search for"
         echo
@@ -268,7 +272,7 @@ function freesurfer_resample_prep ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <fs-white> - the freesurfer white surface"
         echo "      <fs-pial> - the freesurfer pial surface"
@@ -324,7 +328,7 @@ function import_probtrack_roi ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <input-text> - the text file from probtrackx2"
         echo "      <cifti-roi> - the ROI used as the seed mask, as cifti"
@@ -356,7 +360,7 @@ function label_concatenate ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <output-label>"
         echo "      <input-label-1>"
@@ -386,7 +390,7 @@ function metric_concatenate ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <output-metric>"
         echo "      <input-metric-1>"
@@ -416,7 +420,7 @@ function scene_file_concatenate ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <output-scene-file>"
         echo "      <input-scene-file-1>"
@@ -446,7 +450,7 @@ function volume_concatenate ()
     shift
     if (($# < 1))
     then
-        echo "${global_switch_to_descrip[$function_switch]}"
+        echo "`switch_to_descrip $function_switch`"
         echo "   $global_script_name $function_switch"
         echo "      <output-volume>"
         echo "      <input-volume-1>"
@@ -473,17 +477,20 @@ function volume_concatenate ()
 function do_operation ()
 {
     #use the existence of a short description to denote existence of the function
-    if [[ ${global_switch_to_descrip[$1]} != "" ]]
-    then
-        `switch_to_func_name "$1"` "$@"
-        exit 0
-    fi
-    local maxlength=0
-    for switch in "${!global_switch_to_descrip[@]}"
+    for ((i = 0; i < ${#global_switch[@]}; ++i))
     do
-        if [[ "$switch" == "$1"* ]]
+        if [[ "${global_switch[$i]}" == "$1" ]]
         then
-            local thislength=`printf '%s' "$switch" | wc -c`
+            `switch_to_func_name "$1"` "$@"
+            exit 0
+        fi
+    done
+    local maxlength=0
+    for ((i = 0; i < ${#global_switch[@]}; ++i))
+    do
+        if [[ "${global_switch[$i]}" == "$1"* ]]
+        then
+            local thislength=`printf '%s' "${global_switch[$i]}" | wc -c`
             if (( thislength > maxlength ))
             then
                 maxlength=$thislength
@@ -494,29 +501,43 @@ function do_operation ()
     then
         error "the switch '$1' does not match any functions"
     fi
-    for switch in "${!global_switch_to_descrip[@]}"
+    for ((i = 0; i < ${#global_switch[@]}; ++i))
     do
-        if [[ "$switch" == "$function_switch"* ]]
+        if [[ "${global_switch[$i]}" == "$1"* ]]
         then
-            printf "%-${maxlength}s   %s\n" "$switch" "${global_switch_to_descrip[$switch]}"
+            printf "%-${maxlength}s   %s\n" "${global_switch[$i]}" "${global_descrip[$i]}"
         fi
     done | sort
+}
+
+function switch_to_descrip ()
+{
+    #because we aren't using associative arrays, because mac's ancient bash
+    for ((i = 0; i < ${#global_switch[@]}; ++i))
+    do
+        if [[ "${global_switch[$i]}" == "$1" ]]
+        then
+            printf '%s' "${global_descrip[$i]}"
+            return 0
+        fi
+    done
+    return 1
 }
 
 function list_functions ()
 {
     local maxlength=0
-    for switch in "${!global_switch_to_descrip[@]}"
+    for ((i = 0; i < ${#global_switch[@]}; ++i))
     do
-        local thislength=`printf '%s' "$switch" | wc -c`
+        local thislength=`printf '%s' "${global_switch[$i]}" | wc -c`
         if (( thislength > maxlength ))
         then
             maxlength=$thislength
         fi
     done
-    for switch in "${!global_switch_to_descrip[@]}"
+    for ((i = 0; i < ${#global_switch[@]}; ++i))
     do
-        printf "%-${maxlength}s   %s\n" "$switch" "${global_switch_to_descrip[$switch]}"
+        printf "%-${maxlength}s   %s\n" "${global_switch[$i]}" "${global_descrip[$i]}"
     done | sort
 }
 
@@ -533,12 +554,12 @@ function error ()
 
 function check_functions ()
 {
-    for switch in "${!global_switch_to_descrip[@]}"
+    for ((i = 0; i < ${#global_switch[@]}; ++i))
     do
-        local function_name=`switch_to_func_name "$switch"`
+        local function_name=`switch_to_func_name "${global_switch[$i]}"`
         if [[ `type -t "$function_name"` != 'function' ]]
         then
-            echo "ASSERT FAILURE: switch '$switch' does not have matching function '$function_name'"
+            echo "ASSERT FAILURE: switch '${global_switch[$i]}' does not have matching function '$function_name'"
             exit 1
         fi
     done
@@ -552,7 +573,12 @@ function add_temporary_files ()
 
 function cleanup ()
 {
-    rm -f "${global_temporary_files[@]}" &> /dev/null
+    #unset variable gets tripped by @ expansion on empty array
+    #so first test if the array is empty
+    if ((${#global_temporary_files[@]} > 0))
+    then
+        rm -f "${global_temporary_files[@]}" &> /dev/null
+    fi
 }
 trap cleanup EXIT
 
