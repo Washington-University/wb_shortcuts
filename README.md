@@ -3,7 +3,7 @@ Script for common short wb_command sequences
 
 The design of wb_command is to have each command do a small, self-contained bit
 of computation or conversion, to increase the flexibility available when
-writing scripts.  However, this can be akward to use for common tasks that
+writing scripts.  However, this can be awkward to use for common tasks that
 involve a few steps (but aren't long enough to deserve a pipeline script), as
 these are frequently typed directly onto the command line.
 
