@@ -503,6 +503,8 @@ function volume_concatenate ()
         echo
         #wrap guide for 80 columns                                                           |
         echo "      Additional input files may be specified after the mandatory input file."
+        echo "      The -map option takes either a 1-based index or a map name, and causes"
+        echo "      the operation to use only one map from each input file."
         echo
         exit 0
     fi
