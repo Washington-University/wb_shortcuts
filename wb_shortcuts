@@ -25,7 +25,7 @@ set -ue
 
 global_cmd_line="$0 $*"
 global_script_name="wb_shortcuts"
-global_script_version="beta-0.2"
+global_script_version="beta-0.3"
 
 function version ()
 {
@@ -635,7 +635,7 @@ function check_functions ()
     done
 }
 
-declare -a global_temporary_files
+global_temporary_files=()
 function add_temporary_files ()
 {
     global_temporary_files+=("$@")
