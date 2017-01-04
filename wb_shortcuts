@@ -119,7 +119,6 @@ function switch_to_func_name ()
 #ADDING FUNCTIONS:
 #the function to call is automatically generated from the command switch (see above functions)
 #the function MUST follow the same naming convention
-#the short description (second argument to create_function) MUST NOT be empty, or it will think the operation doesn't exist, and run a partial match search
 #you can add names of temporary files before they are created by any command, to ensure that no extra files get left behind on failure
 #if the temporaries could be large, feel free to both add them to the list, and delete them manually
 
