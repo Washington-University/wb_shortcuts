@@ -141,8 +141,8 @@ function border_file_concatenate ()
         echo "      Any input argument can be replaced with a -from-file option followed by a"
         echo "      text file.  Each text file must have one data file per line.  The"
         echo "      -big-text option allows the use of very large text files (>1MB).  This"
-        echo "      check is on by default because loading a data file as a text file into"
-        echo "      the shell memory is a bad idea."
+        echo "      is otherwise considered an error, in order to prevent accidentally"
+        echo "      loading a data file into shell memory as a text file."
         echo
         return 0
     fi
@@ -227,8 +227,8 @@ function cifti_concatenate ()
         echo "      Any input argument can be replaced with a -from-file option followed by a"
         echo "      text file.  Each text file must have one data file per line.  The"
         echo "      -big-text option allows the use of very large text files (>1MB).  This"
-        echo "      check is on by default because loading a data file as a text file into"
-        echo "      the shell memory is a bad idea."
+        echo "      is otherwise considered an error, in order to prevent accidentally"
+        echo "      loading a data file into shell memory as a text file."
         echo
         echo "      The -map option takes either a 1-based"
         echo "      index or a map name, and causes the"
@@ -597,8 +597,8 @@ function label_concatenate ()
         echo "      Any input argument can be replaced with a -from-file option followed by a"
         echo "      text file.  Each text file must have one data file per line.  The"
         echo "      -big-text option allows the use of very large text files (>1MB).  This"
-        echo "      check is on by default because loading a data file as a text file into"
-        echo "      the shell memory is a bad idea."
+        echo "      is otherwise considered an error, in order to prevent accidentally"
+        echo "      loading a data file into shell memory as a text file."
         echo
         echo "      The -map option takes either a 1-based"
         echo "      index or a map name, and causes the"
@@ -698,8 +698,8 @@ function metric_concatenate ()
         echo "      Any input argument can be replaced with a -from-file option followed by a"
         echo "      text file.  Each text file must have one data file per line.  The"
         echo "      -big-text option allows the use of very large text files (>1MB).  This"
-        echo "      check is on by default because loading a data file as a text file into"
-        echo "      the shell memory is a bad idea."
+        echo "      is otherwise considered an error, in order to prevent accidentally"
+        echo "      loading a data file into shell memory as a text file."
         echo
         echo "      The -map option takes either a 1-based"
         echo "      index or a map name, and causes the"
@@ -797,8 +797,8 @@ function scene_file_concatenate ()
         echo "      Any input argument can be replaced with a -from-file option followed by a"
         echo "      text file.  Each text file must have one data file per line.  The"
         echo "      -big-text option allows the use of very large text files (>1MB).  This"
-        echo "      check is on by default because loading a data file as a text file into"
-        echo "      the shell memory is a bad idea."
+        echo "      is otherwise considered an error, in order to prevent accidentally"
+        echo "      loading a data file into shell memory as a text file."
         echo
         return 0
     fi
@@ -884,8 +884,8 @@ function volume_concatenate ()
         echo "      Any input argument can be replaced with a -from-file option followed by a"
         echo "      text file.  Each text file must have one data file per line.  The"
         echo "      -big-text option allows the use of very large text files (>1MB).  This"
-        echo "      check is on by default because loading a data file as a text file into"
-        echo "      the shell memory is a bad idea."
+        echo "      is otherwise considered an error, in order to prevent accidentally"
+        echo "      loading a data file into shell memory as a text file."
         echo
         echo "      The -map option takes either a 1-based"
         echo "      index or a map name, and causes the"
